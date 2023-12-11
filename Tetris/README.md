@@ -1,3 +1,2 @@
 # PACMAN GAME
-
-![PACMAN GAME](https://github.com/bilkeonur/JavaScriptExamples/Pacman/blob/main/images/screenshot.png)
+<img src="https://github.com/bilkeonur/JavaScriptExamples/blob/main/Tetris/images/screenshot.png" width="800">
