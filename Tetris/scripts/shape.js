@@ -26,19 +26,7 @@ class Shape {
     rotate() {
         
         let rotatedShape = this.shape[0].map((val, index) => this.shape.map(row => row[index]).reverse());
-        //let rotatedShape = [];
 
-        /*for(let j=0; j<this.shapeSize; j++) {
-            
-            let tempShape = [];
-            
-            for(let i=0; i<this.shapeSize; i++) {
-                tempShape.push(this.shape[this.shapeSize-i-1][j]);
-            }
-
-            rotatedShape.push(tempShape);
-        }*/
-        
         let shapeSize = rotatedShape.length;
         let bottomYPos = this.yPos + shapeSize;
 
@@ -176,6 +164,14 @@ class Shape {
         }
         else {
             return false;
+        }
+    }
+
+    rotate() {
+        if(this.checkRotation()) {
+            this.draw(0);
+            this.xPos++;
+            this.draw(1);
         }
     }
 }

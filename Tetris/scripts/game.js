@@ -5,16 +5,22 @@ const nextShapeCanvas = document.getElementById("next-shape-canvas");
 const scoreText = document.getElementById("score");
 const hiScoreText = document.getElementById("hi-score");
 const playTimeText = document.getElementById("play-time");
+const clearSound = document.getElementById("audio-clear");
+const endSound = document.getElementById("audio-end");
 
 const gameCanvasContext = gameCanvas.getContext("2d");
 const nextShapeCanvasContext = nextShapeCanvas.getContext("2d");
 
-let shape;
-let nextShape;
+let gameInterval = null;
+let timeInterval = null;
+
+let shape = null;
+let nextShape = null;
 let isGamePaused = false;
 let isGameOver = false;
 let gameScore = 0;
 let playTime = 0;
+let isAnimating = false;
 
 var gameScreen = [
     [0,0,0,0,0,0,0,0,0,0],
@@ -69,6 +75,7 @@ let checkCompletedRow = () => {
             gameScreen.splice(0,0,[0,0,0,0,0,0,0,0,0,0]);
             gameScore+=100;
             scoreText.innerText = String(gameScore).padStart(6,'0');
+            clearSound.play();
         }
     }
 }
@@ -81,7 +88,11 @@ let drawBlock = (canvas,x,y,image) => {
 let drawNextShapeScreen = () => {
     for(let i=0; i < nextShapeScreen.length; i++) {
         for(let j=0; j < nextShapeScreen[0].length; j++) {
-            drawBlock(nextShapeCanvasContext, j * shapeSize + shapeOffset, i * shapeSize + shapeOffset, nextShapeScreen[i][j]);
+            drawBlock(
+                nextShapeCanvasContext, 
+                j * shapeSize + shapeOffset, 
+                i * shapeSize + shapeOffset, 
+                nextShapeScreen[i][j]);
         }
     }
 }
@@ -102,17 +113,29 @@ let drawNextShape = () => {
     }
 }
 
+let cleanGameScreen = () => {
+    for(let i=0; i < gameScreen[0].length; i++) {
+        for(let j=0; j < gameScreen.length; j++) {
+            gameScreen[j][i] = 0;
+        }
+    }
+}
+
 let drawGameScreen = () => {
     for(let i=0; i<gameScreen.length; i++) {
         for(let j=0; j<gameScreen[i].length; j++) {
-            drawBlock(gameCanvasContext, j * shapeSize + shapeOffset, i * shapeSize + shapeOffset, gameScreen[i][j]);
+            drawBlock(
+                gameCanvasContext, 
+                j * shapeSize + shapeOffset, 
+                i * shapeSize + shapeOffset, 
+                gameScreen[i][j]);
         }
     }
 }
 
 let generateRandomShape = () => {
-    //return 1;
-    return Math.floor(Math.random() * 9);
+    return 1;
+    //return Math.floor(Math.random() * 9);
 }
 
 let createNewShape = () => {
@@ -135,15 +158,16 @@ let update = () => {
         if(!isGameOver) {
             drawGameScreen();
             drawNextShapeScreen();
-            if(!shape.moveBottom()) {
+            /*if(!shape.moveBottom()) {
                 checkGameOver();
                 checkCompletedRow();
                 createNewShape();
-            }
+            }*/
         }
         else {
             setHighScore(gameScore);
-            location.reload();
+            endSound.play();
+            if(!isAnimating) gameOverAnimation();
         }
     }
 }
@@ -166,18 +190,56 @@ let setHighScore = (score) => {
     }
 }
 
-getHighScore();
-createNewShape();
-
-let gameInterval = setInterval(gameLoop, 1000 / fps);
-
-let timeInterval = setInterval(() => {
+let updateTime = () => {
     playTime++;
     let hour = formatNumber(parseInt(playTime/3600));
     let minute = formatNumber(parseInt((playTime - (hour * 60)) / 60));
     let second = formatNumber(playTime % 60);
     playTimeText.innerText = hour + ":" + minute + ":" + second;
-}, 1000);
+}
+
+let newGame = () => {
+    shape = null;
+    nextShape = null;
+    isGamePaused = false;
+    isGameOver = false;
+    gameScore = 0;
+    playTime = 0;
+    isAnimating = false;
+
+    cleanGameScreen();
+    cleanNextShapeScreen();
+    getHighScore();
+    createNewShape();
+
+    if(gameInterval != null) clearInterval(gameInterval);
+    if(!gameInterval != null) clearInterval(timeInterval);
+
+    gameInterval = setInterval(gameLoop, 1000 / fps);
+    timeInterval = setInterval(updateTime, 1000);
+}
+
+let gameOverAnimation = () => {
+    isAnimating = true;
+    
+    for(let i=0; i<gameScreen.length; i++) {
+        setTimeout(() => { 
+            for(let j=0; j<gameScreen[0].length; j++) {
+                setTimeout(() => {
+                    gameScreen[i][j] = 1;
+                    drawGameScreen();
+                    if(
+                        i == gameScreen.length-1 && 
+                        j == gameScreen[0].length - 1) {
+                        newGame();
+                    }
+                }, 10 * j);
+            }
+        }, 100 * i);
+    }
+}
+
+newGame();
 
 window.addEventListener("keydown", (event) => {
     let key = event.key;
