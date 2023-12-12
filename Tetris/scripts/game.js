@@ -134,8 +134,7 @@ let drawGameScreen = () => {
 }
 
 let generateRandomShape = () => {
-    return 1;
-    //return Math.floor(Math.random() * 9);
+    return Math.floor(Math.random() * 9);
 }
 
 let createNewShape = () => {
@@ -158,16 +157,18 @@ let update = () => {
         if(!isGameOver) {
             drawGameScreen();
             drawNextShapeScreen();
-            /*if(!shape.moveBottom()) {
+            if(!shape.moveBottom()) {
                 checkGameOver();
                 checkCompletedRow();
                 createNewShape();
-            }*/
+            }
         }
         else {
-            setHighScore(gameScore);
-            endSound.play();
-            if(!isAnimating) gameOverAnimation();
+            if(!isAnimating) {
+                setHighScore(gameScore);
+                endSound.play();
+                gameOverAnimation();
+            }
         }
     }
 }
@@ -250,22 +251,17 @@ window.addEventListener("keydown", (event) => {
 
     if (key == "ArrowRight" || key == "d" || key == "D") {
         shape.moveRight();
-        drawGameScreen();
     }
     else if (key == "ArrowLeft" || key == "a" || key == "A") {
         shape.moveLeft();
-        drawGameScreen();
     }
     else if (key == "ArrowUp" || key == "w" || key == "W") {
         shape.rotate();
-        drawGameScreen();
     }
     else if (key == "ArrowDown" || key == "s" || key == "S") {
         shape.moveBottom();
-        drawGameScreen();
     }
-    else if (key == "Enter") {
-        createNewShape();
-    }
+
+    drawGameScreen();
 });
 

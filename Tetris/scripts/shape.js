@@ -1,15 +1,14 @@
 class Shape {
     constructor(type) {
-        this.type = type;        
+        this.type = type;  
         this.templates = templates;
         this.shape = this.templates[this.type];
         this.shapeSize = this.shape[0].length;
         this.xPos = 4;
         this.yPos = -1;
-        this.bottomYPos = this.yPos + this.shapeSize;
     }
 
-    //Mode 1=Draw, 0=Clear 
+    //Mode 1=Draw, 0=Clear
     draw(mode) {
         for(let i=this.shapeSize-1; i>=0; i--) {
             let yOffset = this.yPos + i - this.shapeSize + 1;
@@ -23,41 +22,39 @@ class Shape {
         }
     }
 
-    rotate() {
-        
+    checkRotation() {
         let rotatedShape = this.shape[0].map((val, index) => this.shape.map(row => row[index]).reverse());
-
-        let shapeSize = rotatedShape.length;
-        let bottomYPos = this.yPos + shapeSize;
-
         this.draw(0);
-
-        if(this.xPos + shapeSize > screenWidth || this.yPos + shapeSize > screenHeight) {
-            this.draw(1);
-            return;
-        }
-
-        for(let i=0; i<shapeSize; i++) {
-            if(gameScreen[this.yPos + i][this.xPos])
-            {
-                this.draw(1);
-                return;
+    
+        let rotatedLeftIndex = 0;
+        
+        loopI:for(let i=0; i<shape.length; i++) {
+            for(let j=shape.length-1; j>=0; j--) {
+                let shpPart = !direction ? shape[j][i] : shape[j][shape.length - 1 - i];
+                if(!shpPart) continue;
+                rotatedLeftIndex = i;
+                break loopI;
             }
         }
 
-        for(let i=0; i<shapeSize; i++) {
-            if(gameScreen[this.yPos][this.xPos + i])
-            {
-                this.draw(1);
-                return;
+        let rotatedLeftPos = this.xPos + rotatedLeftIndex;
+        
+        if(rotatedLeftPos < 0) return false;
+        if(this.xPos + this.shapeSize > screenWidth) return false;
+
+        for(let i=this.shapeSize-1; i>=0; i--) {
+            for(let j=0; j<this.shapeSize; j++) {
+                let shpPart = rotatedShape[i][j]
+                let yOffset = i + this.yPos - this.shapeSize + 1;
+                let xOffset = this.xPos + j;
+                if(yOffset < 0 || yOffset > screenHeight - 1) return false; 
+                let screenPart = gameScreen[yOffset][xOffset];
+                if(shpPart & screenPart) return false;
             }
         }
 
         this.shape = [...rotatedShape];
-        this.shapeSize = shapeSize;
-        this.shapeSize = shapeSize;
-        this.bottomYPos = bottomYPos;
-        this.draw(1);
+        return true;
     }
 
     checkLeftFrame() {
@@ -168,10 +165,7 @@ class Shape {
     }
 
     rotate() {
-        if(this.checkRotation()) {
-            this.draw(0);
-            this.xPos++;
-            this.draw(1);
-        }
+        this.checkRotation();
+        this.draw(1);
     }
 }
