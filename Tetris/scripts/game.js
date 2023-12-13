@@ -22,7 +22,7 @@ let gameScore = 0;
 let playTime = 0;
 let isAnimating = false;
 
-var gameScreen = [
+let gameScreen = [
     [0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0],
@@ -45,7 +45,7 @@ var gameScreen = [
     [0,0,0,0,0,0,0,0,0,0]
 ];
 
-var nextShapeScreen = [
+let nextShapeScreen = [
     [0,0,0,0],
     [0,0,0,0],
     [0,0,0,0],
@@ -214,7 +214,7 @@ let newGame = () => {
     createNewShape();
 
     if(gameInterval != null) clearInterval(gameInterval);
-    if(!gameInterval != null) clearInterval(timeInterval);
+    if(!timeInterval != null) clearInterval(timeInterval);
 
     gameInterval = setInterval(gameLoop, 1000 / fps);
     timeInterval = setInterval(updateTime, 1000);

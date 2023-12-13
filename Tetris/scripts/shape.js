@@ -26,20 +26,20 @@ class Shape {
         let rotatedShape = this.shape[0].map((val, index) => this.shape.map(row => row[index]).reverse());
         this.draw(0);
     
-        let rotatedLeftIndex = 0;
+        let rotatedIndex = 0;
         
-        loopI:for(let i=0; i<shape.length; i++) {
-            for(let j=shape.length-1; j>=0; j--) {
-                let shpPart = !direction ? shape[j][i] : shape[j][shape.length - 1 - i];
+        loopI:for(let i=0; i<this.shapeSize; i++) {
+            for(let j=this.shapeSize-1; j>=0; j--) {
+                let shpPart = this.shape[j][i];
                 if(!shpPart) continue;
-                rotatedLeftIndex = i;
+                rotatedIndex = i;
                 break loopI;
             }
         }
 
-        let rotatedLeftPos = this.xPos + rotatedLeftIndex;
+        let rotatedPos = this.xPos + rotatedIndex;
         
-        if(rotatedLeftPos < 0) return false;
+        if(rotatedPos < 0) return false;
         if(this.xPos + this.shapeSize > screenWidth) return false;
 
         for(let i=this.shapeSize-1; i>=0; i--) {
