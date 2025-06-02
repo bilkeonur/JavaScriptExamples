@@ -1,0 +1,19 @@
+body {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #383838;
+}
+
+#case {
+    background-image: url("../images/3210.png");
+    width: 358px;
+    height: 898px;
+}
+
+#canvas {
+    background-color: black;
+    margin-top: 225px;
+    margin-left: 64px;
+}
